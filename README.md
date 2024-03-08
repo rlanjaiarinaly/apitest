@@ -1,5 +1,5 @@
 # APITEST
-This tool is for API testing
+This tool is for API testing, made with *Golang* and *cobra*
 
 Under the licence of **MIT**
 
