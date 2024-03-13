@@ -29,9 +29,10 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "apitest",
-	Short: "API Testing Tool",
-	Long:  `apitest is a tool for testing various aspects of an API`,
+	Version: "0.1",
+	Use:     "apitest",
+	Short:   "API Testing Tool",
+	Long:    `apitest is a tool for testing various aspects of an API`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },

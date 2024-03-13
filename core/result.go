@@ -9,15 +9,16 @@ import (
 )
 
 type Result struct {
-	RPS      float64       // Request per second
-	Requests int           // Number of requests
-	Errors   int           // Numbers of errors occuring
-	Bytes    int64         // Number of bytes downloaded
-	Duration time.Duration // Duration of single or all requests
-	Fastest  time.Duration // Fastest request duration
-	Slowest  time.Duration // slowest request duration
-	Status   int           // http status for a request
-	Error    error         // not nil if the request presented some error
+	RPS         float64       // Request per second
+	Requests    int           // Number of requests
+	Errors      int           // Numbers of errors occuring
+	Bytes       int64         // Number of bytes downloaded
+	Duration    time.Duration // Duration of single or all requests
+	Fastest     time.Duration // Fastest request duration
+	Slowest     time.Duration
+	AverageTime time.Duration // slowest request duration
+	Status      int           // http status for a request
+	Error       error         // not nil if the request presented some error
 }
 
 func (r *Result) Merge(o *Result) {
@@ -41,6 +42,7 @@ func (r *Result) Merge(o *Result) {
 func (r *Result) Finalize(total time.Duration) *Result {
 	r.Duration = total
 	r.RPS = float64(r.Requests) / total.Seconds()
+	r.AverageTime = total / time.Duration(r.Requests)
 	return r
 }
 
@@ -58,6 +60,7 @@ func (r *Result) Fprint(out io.Writer) {
 	if r.Requests > 1 {
 		p("\tFastest    : %s\n", round(r.Fastest))
 		p("\tSlowest    : %s\n", round(r.Slowest))
+		p("\tAverage    : %s\n", r.AverageTime)
 	}
 }
 
