@@ -1,6 +1,7 @@
 package core
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -13,6 +14,7 @@ import (
 
 var (
 	ErrStatusCode = errors.New("Status Code mismatched")
+	ErrBodyEmpty  = errors.New("Body empty for a POST Request")
 )
 
 type ExpectS struct {
@@ -24,6 +26,7 @@ type input struct {
 	Method string         `yaml:"method"`
 	Header []headerParams `yaml:"headers"`
 	Params []headerParams `yaml:"params"`
+	Body   string         `yaml:"body"`
 }
 
 type headerParams struct {
@@ -84,7 +87,7 @@ func (e *Expect) compareOuput(client *http.Client) *Report {
 	report := &Report{testStatus: true, Result: *result}
 	if result.StatusCode != e.ExpectedOutput.StatusCode {
 		report.testStatus = false
-		report.testErrors = append(report.testErrors, fmt.Errorf("%q : got %d expected %d", ErrStatusCode, result.StatusCode, e.ExpectedOutput.StatusCode))
+		report.testErrors = append(report.testErrors, fmt.Errorf("%s : got %d expected %d", ErrStatusCode, result.StatusCode, e.ExpectedOutput.StatusCode))
 	}
 	return report
 }
@@ -95,7 +98,14 @@ func (e *Expect) createURL(baseURL, method string) (*http.Request, error) {
 		return nil, err
 	}
 	u.RawQuery = e.parseParams().Encode()
-	req, err := http.NewRequest(method, u.String(), http.NoBody)
+	var body io.Reader = http.NoBody
+	if method == "POST" {
+		if e.Input.Body == "" {
+			return nil, fmt.Errorf("%q URL: %s", ErrBodyEmpty, u.String())
+		}
+		body = bytes.NewBuffer([]byte(e.Input.Body))
+	}
+	req, err := http.NewRequest(method, u.String(), body)
 	if err != nil {
 		return nil, err
 	}

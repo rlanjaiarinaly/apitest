@@ -8,13 +8,15 @@ expects:
     params:
     - name: company-uuid
       value: uuid-test
+    body: '{"test":"this is a test"}'
   expectedOutput:
     statusCode: 200
 - input:
     url: https://dev-api.symbiose.glass/company/v1/companies
-    method: GET
+    method: POST
+    body: '{"test":"this is a test"}'
   expectedOutput:
-    statusCode: 500
+    statusCode: 200
 - input:
     url: https://dev-api.symbiose.glass/company/v1/companies
     method: GET
