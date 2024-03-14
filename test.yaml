@@ -1,0 +1,22 @@
+expects: 
+- input:
+    url: https://google.com
+    method: GET
+    headers:
+    - name: Content-Type
+      value: application/json
+    params:
+    - name: company-uuid
+      value: uuid-test
+  expectedOutput:
+    statusCode: 200
+- input:
+    url: https://dev-api.symbiose.glass/company/v1/companies
+    method: GET
+  expectedOutput:
+    statusCode: 500
+- input:
+    url: https://dev-api.symbiose.glass/company/v1/companies
+    method: GET
+  expectedOutput:
+    statusCode: 200

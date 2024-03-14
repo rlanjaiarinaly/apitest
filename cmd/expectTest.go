@@ -20,8 +20,9 @@ var (
 
 // expectTestCmd represents the expectTest command
 var expectTestCmd = &cobra.Command{
-	Use:   "expectTest",
-	Short: "Test route against some expected output",
+	Use:          "expectTest",
+	SilenceUsage: true,
+	Short:        "Test route against some expected output",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -33,6 +34,10 @@ to quickly create a Cobra application.`,
 		if err != nil {
 			return err
 		}
+		// if testExpectedRouteAction(os.Stdout, filepath) != nil {
+		// 	fmt.Println("Some test didn't succeed")
+		// 	os.Exit(1)
+		// }
 		return testExpectedRouteAction(os.Stdout, filepath)
 	},
 }
@@ -53,6 +58,7 @@ func init() {
 }
 
 func testExpectedRouteAction(out io.Writer, filepath string) error {
+	var ok bool = true
 	file, err := os.Open(filepath)
 	if err != nil {
 		return err
@@ -67,7 +73,14 @@ func testExpectedRouteAction(out io.Writer, filepath string) error {
 		},
 	}
 	for report := range expects.CompareOutput(&client) {
+		if !report.Success() {
+			ok = false
+		}
 		report.Fprint(out)
+	}
+
+	if !ok {
+		return errors.New("some tests didn't succeed")
 	}
 
 	return nil
