@@ -105,7 +105,7 @@ func (e *Expect) createURL(baseURL, method string) (*http.Request, error) {
 		}
 		body = bytes.NewBuffer([]byte(e.Input.Body))
 	}
-	req, err := http.NewRequest(method, u.String(), body.(*bytes.Buffer))
+	req, err := http.NewRequest(method, u.String(), body)
 	if err != nil {
 		return nil, err
 	}
