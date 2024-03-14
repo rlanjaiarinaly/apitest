@@ -9,6 +9,7 @@ import (
 )
 
 type Result struct {
+	Url         string
 	RPS         float64       // Request per second
 	Requests    int           // Number of requests
 	Errors      int           // Numbers of errors occuring
@@ -17,7 +18,7 @@ type Result struct {
 	Fastest     time.Duration // Fastest request duration
 	Slowest     time.Duration
 	AverageTime time.Duration // slowest request duration
-	Status      int           // http status for a request
+	StatusCode  int           // http status for a request
 	Error       error         // not nil if the request presented some error
 }
 
@@ -33,7 +34,7 @@ func (r *Result) Merge(o *Result) {
 	switch {
 	case o.Error != nil:
 		fallthrough
-	case o.Status >= http.StatusBadRequest:
+	case o.StatusCode >= http.StatusBadRequest:
 		r.Errors++
 	}
 }

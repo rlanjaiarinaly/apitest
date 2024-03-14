@@ -10,14 +10,13 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"runtime"
 	"strings"
 
 	"github.com/spf13/cobra"
 )
 
 var (
-	ERR_METHOD_NOT_SUPPORTED = errors.New("GET is the only method supported for the moment")
+	ErrMethodNotSupported = errors.New("GET is the only method supported for the moment")
 )
 
 // testrouteCmd represents the testroute command
@@ -66,7 +65,6 @@ func init() {
 	// is called directly, e.g.:
 	// testrouteCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	testrouteCmd.Flags().IntP("number", "n", 1, "The number of request to send to the route")
-	testrouteCmd.Flags().IntP("concurrency", "c", runtime.NumCPU(), "The concurrency level")
 	testrouteCmd.Flags().StringP("method", "m", "GET", "Request Method")
 }
 
@@ -92,7 +90,7 @@ func handleMethod(method string) (string, error) {
 	switch method {
 	case "GET":
 	default:
-		return "", ERR_METHOD_NOT_SUPPORTED
+		return "", ErrMethodNotSupported
 	}
 	return method, nil
 }

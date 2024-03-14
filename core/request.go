@@ -14,11 +14,12 @@ func Send(client *http.Client, r *http.Request) *Result {
 	)
 	response, err := client.Do(r)
 	code = response.StatusCode
-	bytes, err = io.Copy(io.Discard, response.Body)
+	bytes, _ = io.Copy(io.Discard, response.Body)
 	return &Result{
-		Duration: time.Since(t),
-		Bytes:    bytes,
-		Status:   code,
-		Error:    err,
+		Url:        r.URL.String(),
+		Duration:   time.Since(t),
+		Bytes:      bytes,
+		StatusCode: code,
+		Error:      err,
 	}
 }
