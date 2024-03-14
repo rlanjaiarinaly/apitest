@@ -23,12 +23,7 @@ var expectTestCmd = &cobra.Command{
 	Use:          "expectTest",
 	SilenceUsage: true,
 	Short:        "Test route against some expected output",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Long:         `The expectTest subcommand test many routes according to the specifications contained in a yaml file.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		filepath, err := cmd.Flags().GetString("filepath")
 		if err != nil {
