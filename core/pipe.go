@@ -48,7 +48,6 @@ func Split(in <-chan *http.Request, out chan<- *Result, concurrency int, fn Send
 		}()
 	}
 	wg.Wait()
-
 }
 
 func split(in <-chan *http.Request, concurrency int, fn SendFunc) <-chan *Result {

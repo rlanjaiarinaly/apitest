@@ -101,9 +101,9 @@ func (e *Expect) createURL(baseURL, method string) (*http.Request, error) {
 	u.RawQuery = e.parseParams().Encode()
 	var body io.Reader = http.NoBody
 	if method == "POST" {
-		if e.Input.Body == "" {
-			return nil, fmt.Errorf("%q URL: %s", ErrBodyEmpty, u.String())
-		}
+		// if e.Input.Body == "" {
+		// 	return nil, fmt.Errorf("%q URL: %s", ErrBodyEmpty, u.String())
+		// }
 		body = bytes.NewBuffer([]byte(e.Input.Body))
 	}
 	req, err := http.NewRequest(method, u.String(), body)

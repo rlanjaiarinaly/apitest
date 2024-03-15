@@ -77,6 +77,5 @@ func testExpectedRouteAction(out io.Writer, filepath string) error {
 	if !ok {
 		return errors.New("some tests didn't succeed")
 	}
-
 	return nil
 }
