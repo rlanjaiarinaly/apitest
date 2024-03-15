@@ -1,13 +1,13 @@
 expects: 
 - input:
-    url: <URL>
-    method: <METHOD>
-    headers:
-    - name: <header-name>
-      value: <header-value>
-    params:
-    - name: <param-name>
-      value: <param-value>
-    body: '{"test":"this is a test"}'
+    url: https://google.com
+    method: GET
+    # headers:
+    # - name: <header-name>
+    #   value: <header-value>
+    # params:
+    # - name: <param-name>
+    #   value: <param-value>
+    # body: '{"test":"this is a test"}'
   expectedOutput:
     statusCode: 200

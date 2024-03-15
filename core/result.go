@@ -88,10 +88,10 @@ func (result *Result) ToMap() map[string]string {
 	if rType.Kind() == reflect.Ptr {
 		rType = rType.Elem()
 	}
-
+	structVal := reflect.ValueOf(*result)
 	for i := 0; i < rType.NumField(); i++ {
-		structVal := reflect.ValueOf(result)
-		r[rType.Name()] = fmt.Sprint(structVal.FieldByName(rType.Name()).Interface())
+		fieldName := rType.Field(i).Name
+		r[fieldName] = fmt.Sprint(structVal.FieldByName(fieldName))
 	}
 	return r
 }

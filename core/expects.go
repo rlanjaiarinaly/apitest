@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"reflect"
 	"sync"
 
 	"gopkg.in/yaml.v3"
@@ -85,9 +86,9 @@ func (e *Expect) compareOuput(client *http.Client) *Report {
 	e.parseHeader(req)
 	result := Send(client, req)
 	report := &Report{testStatus: true, Result: *result}
-	if result.StatusCode != e.ExpectedOutput.StatusCode {
+	if matchErrors := e.matchTest(result); len(matchErrors) > 0 {
 		report.testStatus = false
-		report.testErrors = append(report.testErrors, fmt.Errorf("%s : got %d expected %d", ErrStatusCode, result.StatusCode, e.ExpectedOutput.StatusCode))
+		report.testErrors = append(report.testErrors, matchErrors...)
 	}
 	return report
 }
@@ -124,4 +125,30 @@ func (e *Expect) parseParams() url.Values {
 		parameters.Add(params.Name, params.Value)
 	}
 	return parameters
+}
+
+func (e *ExpectedOutput) toMap() map[string]string {
+	r := map[string]string{}
+	rType := reflect.TypeOf(e)
+	if rType.Kind() == reflect.Ptr {
+		rType = rType.Elem()
+	}
+	structVal := reflect.ValueOf(*e)
+	for i := 0; i < rType.NumField(); i++ {
+		fieldName := rType.Field(i).Name
+		r[fieldName] = fmt.Sprint(structVal.FieldByName(fieldName))
+	}
+	return r
+}
+
+func (e *Expect) matchTest(result *Result) []error {
+	errorsResult := []error{}
+	expectedMap := e.ExpectedOutput.toMap()
+	resultMap := result.ToMap()
+	for k, v := range expectedMap {
+		if v != resultMap[k] {
+			errorsResult = append(errorsResult, fmt.Errorf("Mismatched %s : got %s, want %s", k, resultMap[k], v))
+		}
+	}
+	return errorsResult
 }
