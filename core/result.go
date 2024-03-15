@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"reflect"
 	"strings"
 	"time"
 )
@@ -79,4 +80,18 @@ func (r *Result) String() string {
 	var s strings.Builder
 	r.Fprint(&s)
 	return s.String()
+}
+
+func (result *Result) ToMap() map[string]string {
+	r := map[string]string{}
+	rType := reflect.TypeOf(result)
+	if rType.Kind() == reflect.Ptr {
+		rType = rType.Elem()
+	}
+
+	for i := 0; i < rType.NumField(); i++ {
+		structVal := reflect.ValueOf(result)
+		r[rType.Name()] = fmt.Sprint(structVal.FieldByName(rType.Name()).Interface())
+	}
+	return r
 }
