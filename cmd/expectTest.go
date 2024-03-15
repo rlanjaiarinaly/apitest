@@ -67,7 +67,10 @@ func testExpectedRouteAction(out io.Writer, filepath string) error {
 			MaxIdleConnsPerHost: runtime.NumCPU(),
 		},
 	}
-	for report := range expects.CompareOutput(&client) {
+	perfClient := core.Client{
+		Concurrency: runtime.NumCPU(),
+	}
+	for report := range expects.CompareOutput(&client, &perfClient) {
 		if !report.Success() {
 			ok = false
 		}
