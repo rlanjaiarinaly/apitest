@@ -1,7 +1,7 @@
 expects: 
 - input:
-    url: https://dev-api.symbiose.glass/customer/v1/addresses/7d6132b716b5d43b7dbfa52870325af381b42092ff15b1457d6e667310743f63/delete
-    method: POST
+    url: https://dev-api.symbiose.glass/company/v1/companies
+    method: GET
     # headers:
     # - name: Content-Type
     #   value: application/json
@@ -16,6 +16,26 @@ expects:
   expectedOutput:
     statusCode: 200
   performanceTest:
-    slowestResponse: 10s
+    slowestResponse: 3s
     success: 100
-    request: 1000
+    request: 100
+- input:
+    url: https://dev-api.symbiose.glass/company/v1/companies
+    method: GET
+    # headers:
+    # - name: Content-Type
+    #   value: application/json
+    # - name: Authorization
+    #   value: Basic <token>
+    # params:
+    # - name: test
+    #   value: test-params
+    # - name: test2
+    #   value: test2-params
+    # body: '{"test":"test"}'
+  expectedOutput:
+    statusCode: 200
+  performanceTest:
+    slowestResponse: 3s
+    success: 100
+    request: 100

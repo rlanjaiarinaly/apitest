@@ -21,7 +21,8 @@ var (
 )
 
 type ExpectS struct {
-	ExpectS []Expect `yaml:"expects"`
+	ExpectS        []Expect `yaml:"expects"`
+	ConcurrentCall int      `yaml:"concurrentCall"`
 }
 
 type input struct {

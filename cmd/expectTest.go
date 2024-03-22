@@ -62,9 +62,13 @@ func testExpectedRouteAction(out io.Writer, filepath string) error {
 	if err != nil {
 		return err
 	}
+	concurrentCall := expects.ConcurrentCall
+	if concurrentCall < runtime.NumCPU() {
+		concurrentCall = runtime.NumCPU()
+	}
 	client := http.Client{
 		Transport: &http.Transport{
-			MaxIdleConnsPerHost: runtime.NumCPU(),
+			MaxIdleConnsPerHost: concurrentCall,
 		},
 	}
 	perfClient := core.Client{
