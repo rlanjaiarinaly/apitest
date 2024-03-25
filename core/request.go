@@ -2,6 +2,7 @@ package core
 
 import (
 	"io"
+	"log"
 	"net/http"
 	"time"
 )
@@ -13,6 +14,10 @@ func Send(client *http.Client, r *http.Request) *Result {
 		bytes int64
 	)
 	response, err := client.Do(r)
+	if err != nil {
+		log.Println(err)
+	}
+	defer response.Body.Close()
 	code = response.StatusCode
 	bytes, _ = io.Copy(io.Discard, response.Body)
 	return &Result{

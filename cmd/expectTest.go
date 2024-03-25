@@ -72,7 +72,7 @@ func testExpectedRouteAction(out io.Writer, filepath string) error {
 		},
 	}
 	perfClient := core.Client{
-		Concurrency: runtime.NumCPU(),
+		Concurrency: concurrentCall,
 	}
 	for report := range expects.CompareOutput(&client, &perfClient) {
 		if !report.Success() {

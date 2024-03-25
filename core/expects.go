@@ -2,10 +2,10 @@ package core
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -82,7 +82,6 @@ func (e *ExpectS) CompareOutput(client *http.Client, perfClient *Client) chan *R
 		go func(expect Expect) {
 			defer wg.Done()
 			out <- expect.compareOuput(client, perfClient)
-			log.Println(expect.PerformanceTest)
 		}(expect)
 	}
 	wg.Wait()
@@ -97,15 +96,19 @@ func (e *Expect) compareOuput(client *http.Client, perfClient *Client) *Report {
 		}
 	}
 	e.parseHeader(req)
+	perfReq := (*req).Clone(context.Background())
+	if req.Method != "GET" {
+		perfBody, _ := req.GetBody()
+		perfReq.Body = io.NopCloser(perfBody)
+	}
 	result := Send(client, req)
-
 	report := &Report{testStatus: true, Result: *result}
 	if matchErrors := e.matchTest(result); len(matchErrors) > 0 {
 		report.testStatus = false
 		report.testErrors = append(report.testErrors, matchErrors...)
 	}
 	if report.testStatus && e.ExpectedOutput.StatusCode == 200 {
-		perfResult := e.PerformanceTest.makePerfTest(perfClient, req)
+		perfResult := e.PerformanceTest.makePerfTest(perfClient, perfReq)
 		if perfErrors := e.PerformanceTest.validate(perfResult); len(perfErrors) > 0 {
 			report.testStatus = false
 			report.testErrors = append(report.testErrors, perfErrors...)

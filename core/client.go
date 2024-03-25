@@ -2,6 +2,7 @@ package core
 
 import (
 	"context"
+	"io"
 	"net/http"
 	"time"
 )
@@ -31,7 +32,14 @@ func (c *Client) do(r *http.Request, n int) *Result {
 	defer client.CloseIdleConnections()
 
 	p := produce(n, func() *http.Request {
-		return r.Clone(context.Background())
+
+		reqCloned := r.Clone(context.Background())
+		if r.Body != http.NoBody {
+			if b, err := r.GetBody(); err == nil {
+				reqCloned.Body = io.NopCloser(b)
+			}
+		}
+		return reqCloned
 	})
 
 	var sum Result
